@@ -2,24 +2,26 @@ import { uuid } from 'uuidv4';
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ApicepService } from '../services/apicep/apicep.service';
+import { apiCepService } from '../services/apicep/apicep.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { UserDocument } from '../schemas/user.schema';
 import { usersList } from './test/mocks/userList.mock';
 import { mockUserModel } from './test/mocks/user.model.mock';
+import { mockAPiService } from './test/mocks/api.service.mock';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const mongoose = require('mongoose');
 
 describe('User Model Service', () => {
   let usersService: UserService;
   let userModel: Model<UserDocument>;
 
-  const mockAPiService = {};
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ApicepService,
+        apiCepService,
         UserService,
         {
           provide: getModelToken(User.name),
@@ -27,7 +29,7 @@ describe('User Model Service', () => {
         },
       ],
     })
-      .overrideProvider(ApicepService)
+      .overrideProvider(apiCepService)
       .useValue(mockAPiService)
       .compile();
 
@@ -49,6 +51,7 @@ describe('User Model Service', () => {
 
       cep: '03607060',
     };
+
     it('should create a new user  successfully', async () => {
       const result = await usersService.create(createDTO);
 

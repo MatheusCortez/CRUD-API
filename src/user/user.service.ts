@@ -11,7 +11,7 @@ import { uuid } from 'uuidv4';
 
 import { User } from './entities/user.entity';
 
-import { ApicepService } from '../services/apicep/apicep.service';
+import { apiCepService } from '../services/apicep/apicep.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDocument } from '../schemas/user.schema';
@@ -20,7 +20,7 @@ import { UserDocument } from '../schemas/user.schema';
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private buscaCepService: ApicepService,
+    private buscaCepService: apiCepService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {

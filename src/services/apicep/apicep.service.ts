@@ -4,12 +4,12 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
-export class ApicepService {
+export class apiCepService {
   async search(code: string): Promise<Address> {
     const cepFormatado = code.replace(/\D/g, '');
     try {
       const { data } = await axios.get(
-        `${Config.APICEP.CEP_URL}/${cepFormatado}/json/`,
+        `${Config.apiCep.CEP_URL}/${cepFormatado}/json/`,
       );
       const address = {
         code: code,

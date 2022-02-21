@@ -21,7 +21,7 @@ describe('User Module Controller', () => {
     userController = module.get<UserController>(UserController);
   });
 
-  it('should be defined', () => {
+  it('Should be defined', () => {
     expect(userController).toBeDefined();
   });
 
@@ -35,39 +35,39 @@ describe('User Module Controller', () => {
       cep: '03607060',
     };
     describe('When the service call is successful', () => {
-      it('should call the method create with params ', async () => {
+      it('Should call the method create with params ', async () => {
         const result = await userController.create(createDTO);
         expect(userServiceMock.create).toHaveBeenCalledWith(result);
       });
-      it('should a create a user successfully', async () => {
+      it('Should a create a user successfully', async () => {
         const result = await userController.create(createDTO);
         expect(result).toEqual(createDTO);
       });
-      it('should  call  the method create', async () => {
+      it('Should  call  the method create', async () => {
         expect(userServiceMock.create).toHaveBeenCalled();
       });
     });
   });
 
   describe('GetUsers', () => {
-    describe('when called the user list', () => {
-      it('should return array users', async () => {
+    describe('When called the user list', () => {
+      it('Should return array users', async () => {
         const result = await userController.findAll();
         expect(result).toEqual(usersList);
       });
-      it('should a call the method findAll', async () => {
+      it('Should a call the method findAll', async () => {
         expect(userServiceMock.findAll).toHaveBeenCalled();
       });
     });
 
-    describe('when called the user item', () => {
-      it('should a get a user with a id param', async () => {
+    describe('When called the user item ', () => {
+      it('Should a get a user with a id param', async () => {
         const result = await userController.findOne(usersList[0].id);
         expect(userServiceMock.findOne).toHaveBeenLastCalledWith(
           usersList[0].id,
         );
       });
-      it('should a call the findOne Method', async () => {
+      it('Should a call the findOne Method', async () => {
         const result = await userController.findOne(usersList[0].id);
         expect(userServiceMock.findOne).toBeCalled();
       });
@@ -82,10 +82,12 @@ describe('User Module Controller', () => {
 
       cep: '03607060',
     };
-    describe('when  called the method update', () => {
-      it('should update a user item successfully', async () => {
+    describe('When  called the method update', () => {
+      it('Should call userServiceMock.update', async () => {
         const result = await userController.update(usersList[0].id, updateDTO);
         expect(userServiceMock.update).toBeCalled();
+      });
+      it('Should call userServiceMock.update with result id ', () => {
         expect(userServiceMock.update).toBeCalledWith(
           usersList[0].id,
           updateDTO,
@@ -95,11 +97,12 @@ describe('User Module Controller', () => {
   });
 
   describe('Delete a user', () => {
-    it('should remove a todo item successfully', async () => {
-      const result = await userController.remove(usersList[1].id);
-      expect(userServiceMock.remove).toBeCalled();
-      expect(userServiceMock.remove).toHaveBeenCalledWith(usersList[1].id);
-      expect(result).toEqual(undefined);
+    it('Should call userServiceMock.remove', async () => {
+      const result = await userController.remove(usersList[0].id);
+      expect(userServiceMock.update).toBeCalled();
+    });
+    it('Should call userServiceMock.remove with result id ', () => {
+      expect(userServiceMock.remove).toBeCalledWith(usersList[0].id);
     });
   });
 });
