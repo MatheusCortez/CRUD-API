@@ -1,10 +1,10 @@
 require('dotenv').config();
 
 export const Config = {
-  DATABASE: {
+  database: {
     DB_CONFIG: process.env.DATABASE,
   },
-  APICEP: {
+  apiCep: {
     CEP_URL: process.env.API_VIACEP,
   },
 };

@@ -8,7 +8,7 @@ import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(Config.DATABASE.DB_CONFIG),
+    MongooseModule.forRoot(Config.database.DB_CONFIG),
     UserModule,
     ServicesModule,
   ],
