@@ -1,18 +1,16 @@
-import { IsNotEmpty, IsEmail, } from 'class-validator';
+import { IsNotEmpty, IsEmail } from 'class-validator';
 export class CreateUserDto {
-    id: string;
-    @IsNotEmpty({
-        message: "Nome é um campo obrigatorio"
-    })
-    name: string;
-    @IsNotEmpty({ message: "Email é um campo obrigatorio" })
-    @IsEmail({
+  id: string;
+  @IsNotEmpty({
+    message: 'Nome é um campo obrigatorio',
+  })
+  name: string;
+  @IsNotEmpty({ message: 'Email é um campo obrigatorio' })
+  @IsEmail({}, { message: 'Email inserido invalido' })
+  email: string;
 
-    }, { message: "Email inserido invalido" })
-    email: string;
-
-    @IsNotEmpty({
-        message: "CEP é um campo obrigatorio"
-    })
-    cep: string;
+  @IsNotEmpty({
+    message: 'CEP é um campo obrigatorio',
+  })
+  cep: string;
 }

@@ -6,11 +6,13 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { UserSchema } from './../schemas/user.schema';
 import { User } from './entities/user.entity';
-import { ApicepService } from 'src/services/apicep/apicep.service';
+import { ApicepService } from '../services/apicep/apicep.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+  ],
   controllers: [UserController],
-  providers: [UserService, ApicepService]
+  providers: [UserService, ApicepService],
 })
-export class UserModule { }
+export class UserModule {}

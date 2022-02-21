@@ -9,8 +9,10 @@ import { ServicesModule } from './services/services.module';
 @Module({
   imports: [
     MongooseModule.forRoot(Config.DataBase.DB_CONFIG),
-    UserModule, ServicesModule],
+    UserModule,
+    ServicesModule,
+  ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
