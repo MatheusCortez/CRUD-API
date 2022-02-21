@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 export const Config = {
-  DataBase: {
+  DATABASE: {
     DB_CONFIG: process.env.DATABASE,
   },
   APICEP: {
