@@ -2,7 +2,7 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Address } from './../../types/Adress.type';
 
 export class User {
-  constructor(User: Partial<User>) {
+  constructor(User?: Partial<User>) {
     this.id = User.id;
     this.name = User.name;
     this.email = User.email;

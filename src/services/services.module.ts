@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ApicepService } from './apicep/apicep.service';
+import { apiCepService } from './apicep/apicep.service';
 
 @Module({
-  providers: [ApicepService],
+  providers: [apiCepService],
 })
 export class ServicesModule {}

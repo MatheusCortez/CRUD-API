@@ -25,7 +25,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const { name, cep, email } = createUserDto;
-    const userFound = await this.userModel.findOne({ email: email }).exec();
+    const userFound = await this.userModel.findOne({ email: email });
     if (!!userFound) throw new BadRequestException('Email já Cadastrado');
     const resultAPI = await this.buscaCepService.search(cep);
 

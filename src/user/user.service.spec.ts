@@ -1,33 +1,37 @@
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import { uuid } from 'uuidv4';
 import { Model } from 'mongoose';
-import { getModelToken } from '@nestjs/mongoose';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { apiCepService } from '../services/apicep/apicep.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
-import { UserDocument } from '../schemas/user.schema';
-import { usersList } from './test/mocks/userList.mock';
-import { mockUserModel } from './test/mocks/user.model.mock';
+import { UserDocument, UserSchema } from '../schemas/user.schema';
 import { mockAPiService } from './test/mocks/api.service.mock';
+import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { UpdateUserDto } from './dto/update-user.dto';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mongoose = require('mongoose');
-
-describe('User Model Service', () => {
+describe('User  Service', () => {
   let usersService: UserService;
   let userModel: Model<UserDocument>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        apiCepService,
-        UserService,
-        {
-          provide: getModelToken(User.name),
-          useValue: mockUserModel,
-        },
+      imports: [
+        MongooseModule.forRootAsync({
+          useFactory: async () => {
+            const inMemoryMongoServer = new MongoMemoryServer();
+            await inMemoryMongoServer.start();
+            const uri = inMemoryMongoServer.getUri();
+            return {
+              uri: uri,
+            };
+          },
+        }),
+        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
       ],
+      providers: [apiCepService, UserService],
     })
       .overrideProvider(apiCepService)
       .useValue(mockAPiService)
@@ -35,6 +39,9 @@ describe('User Model Service', () => {
 
     usersService = module.get<UserService>(UserService);
     userModel = module.get<Model<UserDocument>>(getModelToken(User.name));
+  });
+  afterEach(async () => {
+    await userModel.deleteMany({});
   });
 
   it('should be defined', () => {
@@ -51,34 +58,118 @@ describe('User Model Service', () => {
 
       cep: '03607060',
     };
+    describe('User creating sucesss', () => {
+      it('Should an user creating sucess', async () => {
+        const user = await usersService.create(createDTO);
+        const resultData = await userModel.findOne({ email: createDTO.email });
+        expect(resultData).not.toBeNull();
+      });
+    });
+    describe('When creating an user email already exist', () => {
+      it('Should a bad request exception', async () => {
+        const createdUser = await userModel.create(createDTO);
+        const result = async () => await usersService.create(createDTO);
+        expect(result).rejects.toEqual(
+          new BadRequestException('Email já Cadastrado'),
+        );
+      });
+    });
 
-    it('should create a new user  successfully', async () => {
-      const result = await usersService.create(createDTO);
-
-      expect(userModel.create).toBeCalled();
-      expect(userModel.create).toBeCalledWith(createDTO);
+    describe('When creating an user and API Service throws an error', () => {
+      const user: CreateUserDto = {
+        id: uuid(),
+        name: 'Matheus Cortez',
+        email: 'Matheus.cortez@live.com',
+        cep: '',
+      };
+      it('Should create an user and passing a invalid or not found CEP', async () => {
+        const result = await usersService.create(user);
+        expect(result.address).toEqual(null);
+      });
     });
   });
-  describe('findAll', () => {
-    it('should return a UsersList sucessfully', async () => {
-      const result = await usersService.findAll();
+  describe('Get User', () => {
+    describe('when  fetching the user list', () => {
+      it('should return a UsersList sucessfully', async () => {
+        const result = await usersService.findAll();
+        expect(result).not.toEqual(null);
+      });
+    });
+    describe('when  fetching the user item', () => {
+      const createDTO: CreateUserDto = {
+        id: uuid(),
+        name: 'Matheus Cortez',
 
-      expect(result).toEqual(usersList);
-      expect(userModel.find).toHaveBeenCalled();
+        email: 'Matheus.cortez@live.com',
+
+        cep: '03607060',
+      };
+
+      it('should the user item searching by id ', async () => {
+        const user = await userModel.create(createDTO);
+        const result = await usersService.findOne(user.id);
+        expect(result).not.toBe(null);
+      });
+    });
+    describe('when we search for a user that does not exist', () => {
+      it('should a error status', async () => {
+        const id = uuid();
+        const result = async () => await usersService.findOne(id);
+
+        expect(result).rejects.toEqual(
+          new HttpException(
+            {
+              status: HttpStatus.NOT_FOUND,
+              error: 'Nenhum usuário encontrado',
+            },
+            HttpStatus.NOT_FOUND,
+          ),
+        );
+      });
     });
   });
 
-  describe('FindOne User', () => {
-    it('should return a User  item successfully', async () => {
-      const result = await usersService.findOne(usersList[1].id);
+  describe('Update User', () => {
+    const createDTO: CreateUserDto = {
+      id: uuid(),
+      name: 'Matheus Cortez',
 
-      expect(mockUserModel.findById).toBeCalled();
-      expect(mockUserModel.findById).toBeCalledWith(usersList[1].id);
-      expect(result).toEqual(usersList[1]);
+      email: 'Matheus.cortez@live.com',
+
+      cep: '03607060',
+    };
+    const updateUser: UpdateUserDto = {
+      name: 'Matheus Silva',
+
+      cep: '',
+    };
+
+    describe('when the update is successful ', () => {
+      it('should a user updated sucess', async () => {
+        const user = await usersService.create(createDTO);
+        const userUpdated = await usersService.update(user.id, updateUser);
+        expect(userUpdated.name).toEqual(updateUser.name);
+      });
     });
   });
 
-  //  describe('update a  user', () => {});
+  describe('Deleted User', () => {
+    const createDTO: CreateUserDto = {
+      id: uuid(),
+      name: 'Matheus Cortez',
 
-  //describe('remove a user', () => {});
+      email: 'Matheus.cortez@live.com',
+
+      cep: '03607060',
+    };
+
+    describe('When the delete is sucessful', () => {
+      it('should a user delete sucess', async () => {
+        const user = await usersService.create(createDTO);
+        await usersService.remove(user.id);
+        const userDeleted = await usersService.findOne(user.id);
+        expect(userDeleted).toEqual(null);
+      });
+    });
+  });
 });

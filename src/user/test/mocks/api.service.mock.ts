@@ -1,1 +1,3 @@
-export const mockAPiService = {};
+export const mockAPiService = {
+  search: jest.fn(),
+};
