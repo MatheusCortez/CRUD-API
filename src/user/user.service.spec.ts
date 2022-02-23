@@ -48,6 +48,7 @@ describe('User  Service', () => {
   });
   afterEach(async () => {
     await userModel.deleteMany({});
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -178,6 +179,21 @@ describe('User  Service', () => {
         expect(userUpdated.name).toEqual(updateUser.name);
       });
     });
+    describe('When the user not found', () => {
+      it('should a error status and message', async () => {
+        const id = uuid();
+        const result = async () => await usersService.update(id, updateUser);
+        expect(result).rejects.toEqual(
+          new HttpException(
+            {
+              status: HttpStatus.NOT_FOUND,
+              error: 'Nenhum usuário encontrado',
+            },
+            HttpStatus.NOT_FOUND,
+          ),
+        );
+      });
+    });
   });
 
   describe('Deleted User', () => {
@@ -201,16 +217,21 @@ describe('User  Service', () => {
     describe('When the user not found', () => {
       it('should a error status and message', async () => {
         const id = uuid();
-        const result = async () => await usersService.remove(id);
-        expect(result).rejects.toEqual(
-          new HttpException(
-            {
-              status: HttpStatus.NOT_FOUND,
-              error: 'Nenhum usuário encontrado',
-            },
-            HttpStatus.NOT_FOUND,
-          ),
-        );
+
+        try {
+          await usersService.remove(id);
+        } catch (error) {
+          console.log(error);
+          expect(error).toEqual(
+            new HttpException(
+              {
+                status: HttpStatus.NOT_FOUND,
+                error: 'Nenhum usuário encontrado',
+              },
+              HttpStatus.NOT_FOUND,
+            ),
+          );
+        }
       });
     });
   });
