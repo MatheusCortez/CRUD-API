@@ -1,3 +1,3 @@
-export const mockAPiService = {
-  search: jest.fn(),
+export default {
+  search: jest.fn(() => Promise.resolve({ data: {} })),
 };

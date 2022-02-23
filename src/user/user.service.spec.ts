@@ -1,16 +1,22 @@
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { uuid } from 'uuidv4';
 import { Model } from 'mongoose';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
-import { Test, TestingModule } from '@nestjs/testing';
+
 import { apiCepService } from '../services/apicep/apicep.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { UserDocument, UserSchema } from '../schemas/user.schema';
-import { mockAPiService } from './test/mocks/api.service.mock';
-import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+
 import { UpdateUserDto } from './dto/update-user.dto';
+
+const mockApiService = {
+  search: jest.fn(),
+};
 
 describe('User  Service', () => {
   let usersService: UserService;
@@ -34,7 +40,7 @@ describe('User  Service', () => {
       providers: [apiCepService, UserService],
     })
       .overrideProvider(apiCepService)
-      .useValue(mockAPiService)
+      .useValue(mockApiService)
       .compile();
 
     usersService = module.get<UserService>(UserService);
@@ -61,6 +67,19 @@ describe('User  Service', () => {
     describe('User creating sucesss', () => {
       it('Should an user creating sucess', async () => {
         const user = await usersService.create(createDTO);
+        mockApiService.search = jest.fn(() =>
+          Promise.resolve({
+            data: {
+              code: '03607060',
+              state: 'SP',
+              city: 'São Paulo',
+              district: 'Vila São Geraldo',
+              address: 'Rua',
+            },
+          }),
+        );
+        const { data } = await mockApiService.search();
+        user.address = data;
         const resultData = await userModel.findOne({ email: createDTO.email });
         expect(resultData).not.toBeNull();
       });
@@ -68,6 +87,7 @@ describe('User  Service', () => {
     describe('When creating an user email already exist', () => {
       it('Should a bad request exception', async () => {
         const createdUser = await userModel.create(createDTO);
+        const resultAPI = await mockApiService.search();
         const result = async () => await usersService.create(createDTO);
         expect(result).rejects.toEqual(
           new BadRequestException('Email já Cadastrado'),
@@ -84,7 +104,14 @@ describe('User  Service', () => {
       };
       it('Should create an user and passing a invalid or not found CEP', async () => {
         const result = await usersService.create(user);
-        expect(result.address).toEqual(null);
+        mockApiService.search = jest.fn(() =>
+          Promise.resolve({
+            data: null,
+          }),
+        );
+        const { data } = await mockApiService.search();
+        result.address = data;
+        expect(result.address).toBeNull();
       });
     });
   });
@@ -112,7 +139,7 @@ describe('User  Service', () => {
       });
     });
     describe('when we search for a user that does not exist', () => {
-      it('should a error status', async () => {
+      it('should a error status and message', async () => {
         const id = uuid();
         const result = async () => await usersService.findOne(id);
 
@@ -169,6 +196,21 @@ describe('User  Service', () => {
         await usersService.remove(user.id);
         const userDeleted = await usersService.findOne(user.id);
         expect(userDeleted).toEqual(null);
+      });
+    });
+    describe('When the user not found', () => {
+      it('should a error status and message', async () => {
+        const id = uuid();
+        const result = async () => await usersService.remove(id);
+        expect(result).rejects.toEqual(
+          new HttpException(
+            {
+              status: HttpStatus.NOT_FOUND,
+              error: 'Nenhum usuário encontrado',
+            },
+            HttpStatus.NOT_FOUND,
+          ),
+        );
       });
     });
   });
