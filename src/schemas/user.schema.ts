@@ -5,10 +5,8 @@ import { Document } from 'mongoose';
 export class Address {
   @Prop()
   code: string;
-
   @Prop()
   state: string;
-
   @Prop()
   city: string;
   @Prop()

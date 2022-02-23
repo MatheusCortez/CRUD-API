@@ -20,18 +20,14 @@ describe('User Module Controller', () => {
 
     userController = module.get<UserController>(UserController);
   });
-
   it('Should be defined', () => {
     expect(userController).toBeDefined();
   });
-
   describe('Create user', () => {
     const createDTO: CreateUserDto = {
       id: uuid(),
       name: 'Matheus Cortez',
-
       email: 'Matheus.cortez@live.com',
-
       cep: '03607060',
     };
     describe('When the service call is successful', () => {
@@ -48,7 +44,6 @@ describe('User Module Controller', () => {
       });
     });
   });
-
   describe('GetUsers', () => {
     describe('When called the user list', () => {
       it('Should return array users', async () => {
@@ -59,7 +54,6 @@ describe('User Module Controller', () => {
         expect(userServiceMock.findAll).toHaveBeenCalled();
       });
     });
-
     describe('When called the user item ', () => {
       it('Should a get a user with a id param', async () => {
         const result = await userController.findOne(usersList[0].id);
@@ -73,13 +67,10 @@ describe('User Module Controller', () => {
       });
     });
   });
-
   describe('Update User', () => {
     const updateDTO = {
       name: 'Matheus Cortez',
-
       email: 'Matheus.cortez@live.com',
-
       cep: '03607060',
     };
     describe('When  called the method update', () => {
@@ -95,7 +86,6 @@ describe('User Module Controller', () => {
       });
     });
   });
-
   describe('Delete a user', () => {
     it('Should call userServiceMock.remove', async () => {
       const result = await userController.remove(usersList[0].id);

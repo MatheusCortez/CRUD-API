@@ -28,7 +28,6 @@ export class UserService {
     const userFound = await this.userModel.findOne({ email: email });
     if (!!userFound) throw new BadRequestException('Email já Cadastrado');
     const resultAPI = await this.buscaCepService.search(cep);
-
     const address = resultAPI
       ? {
           code: resultAPI.code,
@@ -45,10 +44,8 @@ export class UserService {
       email,
       address,
     };
-
     return this.userModel.create(user);
   }
-
   findAll() {
     return this.userModel.find();
   }

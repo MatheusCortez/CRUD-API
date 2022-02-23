@@ -5,23 +5,19 @@ import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { uuid } from 'uuidv4';
 import { Model } from 'mongoose';
-
 import { apiCepService } from '../services/apicep/apicep.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { UserDocument, UserSchema } from '../schemas/user.schema';
-
 import { UpdateUserDto } from './dto/update-user.dto';
 
 const mockApiService = {
   search: jest.fn(),
 };
-
 describe('User  Service', () => {
   let usersService: UserService;
   let userModel: Model<UserDocument>;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -50,12 +46,10 @@ describe('User  Service', () => {
     await userModel.deleteMany({});
     jest.clearAllMocks();
   });
-
   it('should be defined', () => {
     expect(usersService).toBeDefined();
     expect(userModel).toBeDefined();
   });
-
   describe('Create User', () => {
     const createDTO: CreateUserDto = {
       id: uuid(),
@@ -156,22 +150,17 @@ describe('User  Service', () => {
       });
     });
   });
-
   describe('Update User', () => {
     const createDTO: CreateUserDto = {
       id: uuid(),
       name: 'Matheus Cortez',
-
       email: 'Matheus.cortez@live.com',
-
       cep: '03607060',
     };
     const updateUser: UpdateUserDto = {
       name: 'Matheus Silva',
-
       cep: '',
     };
-
     describe('when the update is successful ', () => {
       it('should a user updated sucess', async () => {
         const user = await usersService.create(createDTO);
@@ -195,17 +184,13 @@ describe('User  Service', () => {
       });
     });
   });
-
   describe('Deleted User', () => {
     const createDTO: CreateUserDto = {
       id: uuid(),
       name: 'Matheus Cortez',
-
       email: 'Matheus.cortez@live.com',
-
       cep: '03607060',
     };
-
     describe('When the delete is sucessful', () => {
       it('should a user delete sucess', async () => {
         const user = await usersService.create(createDTO);
