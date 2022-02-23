@@ -10,7 +10,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { uuid } from 'uuidv4';
 
 import { User } from './entities/user.entity';
+<<<<<<< HEAD
 
+=======
+>>>>>>> e4dd067b9cceaa31adf838b2ba5f17a518b68231
 import { apiCepService } from '../services/apicep/apicep.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -25,9 +28,16 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const { name, cep, email } = createUserDto;
+<<<<<<< HEAD
     const userFound = await this.userModel.findOne({ email: email });
     if (!!userFound) throw new BadRequestException('Email já Cadastrado');
     const resultAPI = await this.buscaCepService.search(cep);
+=======
+    const userFound = await this.userModel.findOne({ email: email }).exec();
+    if (!!userFound) throw new BadRequestException('Email já Cadastrado');
+    const resultAPI = await this.buscaCepService.search(cep);
+
+>>>>>>> e4dd067b9cceaa31adf838b2ba5f17a518b68231
     const address = resultAPI
       ? {
           code: resultAPI.code,
@@ -44,6 +54,10 @@ export class UserService {
       email,
       address,
     };
+<<<<<<< HEAD
+=======
+
+>>>>>>> e4dd067b9cceaa31adf838b2ba5f17a518b68231
     return this.userModel.create(user);
   }
   findAll() {
