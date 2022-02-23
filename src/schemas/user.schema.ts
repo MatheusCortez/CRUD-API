@@ -5,15 +5,8 @@ import { Document } from 'mongoose';
 export class Address {
   @Prop()
   code: string;
-<<<<<<< HEAD
   @Prop()
   state: string;
-=======
-
-  @Prop()
-  state: string;
-
->>>>>>> e4dd067b9cceaa31adf838b2ba5f17a518b68231
   @Prop()
   city: string;
   @Prop()

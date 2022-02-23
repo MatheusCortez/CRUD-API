@@ -206,7 +206,6 @@ describe('User  Service', () => {
         try {
           await usersService.remove(id);
         } catch (error) {
-          console.log(error);
           expect(error).toEqual(
             new HttpException(
               {
