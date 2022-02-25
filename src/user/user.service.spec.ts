@@ -54,9 +54,8 @@ describe('User  Service', () => {
     const createDTO: CreateUserDto = {
       id: uuid(),
       name: 'Matheus Cortez',
-
       email: 'Matheus.cortez@live.com',
-
+      password: '1234',
       cep: '03607060',
     };
     describe('User creating sucesss', () => {
@@ -95,6 +94,7 @@ describe('User  Service', () => {
         id: uuid(),
         name: 'Matheus Cortez',
         email: 'Matheus.cortez@live.com',
+        password: '1234',
         cep: '',
       };
       it('Should create an user and passing a invalid or not found CEP', async () => {
@@ -121,9 +121,8 @@ describe('User  Service', () => {
       const createDTO: CreateUserDto = {
         id: uuid(),
         name: 'Matheus Cortez',
-
+        password: '1234',
         email: 'Matheus.cortez@live.com',
-
         cep: '03607060',
       };
 
@@ -154,6 +153,7 @@ describe('User  Service', () => {
     const createDTO: CreateUserDto = {
       id: uuid(),
       name: 'Matheus Cortez',
+      password: '1234',
       email: 'Matheus.cortez@live.com',
       cep: '03607060',
     };
@@ -189,6 +189,7 @@ describe('User  Service', () => {
       id: uuid(),
       name: 'Matheus Cortez',
       email: 'Matheus.cortez@live.com',
+      password: '1234',
       cep: '03607060',
     };
     describe('When the delete is sucessful', () => {

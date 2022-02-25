@@ -30,19 +30,19 @@ describe('BooksController', () => {
     describe('When the authentication is successful', () => {
       describe('Create a book item', () => {
         const bookCreate: CreateBookDto = {
-          id: uuid(),
           titulo: 'Suicidas',
           autor: 'Rafael Montes',
           genero: 'Suspense',
           anoDeLancamento: '2012',
         };
         describe('When the service called is sucess', () => {
+          const idUser = '7b6b224e-b290-42bf-9387-a173323ec987';
           it('Should call the method create with params ', async () => {
-            const result = await bookController.create(bookCreate);
+            const result = await bookController.create(bookCreate, idUser);
             expect(bookServiceMock.create).toHaveBeenCalledWith(result);
           });
           it('Should a create a book successfully ', async () => {
-            const result = await bookController.create(bookCreate);
+            const result = await bookController.create(bookCreate, idUser);
             expect(result).toEqual(bookCreate);
           });
           it('Should  call  the method create', async () => {
@@ -51,9 +51,10 @@ describe('BooksController', () => {
         });
       });
       describe('Get Books', () => {
+        const idUser = '7b6b224e-b290-42bf-9387-a173323ec987';
         describe('When called the book list', () => {
           it('Should return array books', async () => {
-            const result = await bookController.findAll();
+            const result = await bookController.findAll(idUser);
             expect(result).toEqual(booksListmock);
           });
           it('Should a call the method findAll', async () => {
@@ -62,18 +63,23 @@ describe('BooksController', () => {
         });
         describe('When called the book item ', () => {
           it('Should a get a user with a id param', async () => {
-            const result = await bookController.findOne(booksListmock[0].id);
+            const result = await bookController.findOne(
+              booksListmock[0].id,
+              idUser,
+            );
             expect(bookServiceMock.findOne).toHaveBeenLastCalledWith(result);
           });
         });
       });
       describe('Update books', () => {
+        const idUser = '7b6b224e-b290-42bf-9387-a173323ec987';
         const updateBook = {};
         describe('When  called the method update', () => {
           it('Should call bookServiceMock.update', async () => {
             const result = await bookController.update(
               booksListmock[0].id,
               updateBook,
+              idUser,
             );
             expect(bookServiceMock.update).toBeCalled();
           });
@@ -86,12 +92,19 @@ describe('BooksController', () => {
         });
       });
       describe('Delete a book item', () => {
+        const idUser = '7b6b224e-b290-42bf-9387-a173323ec987';
         it('Should call userServiceMock.remove', async () => {
-          const result = await bookController.remove(booksListmock[0].id);
+          const result = await bookController.remove(
+            booksListmock[0].id,
+            idUser,
+          );
           expect(bookServiceMock.update).toBeCalled();
         });
         it('Should call userServiceMock.remove with result id ', () => {
-          expect(bookServiceMock.remove).toBeCalledWith(booksListmock[0].id);
+          expect(bookServiceMock.remove).toBeCalledWith(
+            booksListmock[0].id,
+            idUser,
+          );
         });
       });
     });

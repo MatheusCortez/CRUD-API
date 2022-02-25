@@ -14,6 +14,8 @@ export class Book {
   @Prop()
   genero: string;
   @Prop()
+  user: string;
+  @Prop()
   anoDeLancamento: string;
 }
 

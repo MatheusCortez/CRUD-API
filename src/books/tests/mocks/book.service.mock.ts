@@ -7,7 +7,7 @@ export const bookServiceMock = {
     };
   }),
   findAll: jest.fn().mockResolvedValue(booksListmock),
-  findOne: jest.fn().mockResolvedValue(booksListmock[0].id),
+  findOne: jest.fn().mockResolvedValue(booksListmock),
   update: jest.fn(),
   remove: jest.fn(),
 };

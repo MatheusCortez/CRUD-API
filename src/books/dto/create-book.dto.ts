@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateBookDto {
-  id: string;
   @IsNotEmpty({
     message: 'Titulo  é um campo obrigatorio',
   })
