@@ -1,3 +1,4 @@
+import { uuid } from 'uuidv4';
 import { Book } from './entities/book.entity';
 import { BookDocument } from 'src/schemas/book.schema';
 import { Model } from 'mongoose';
@@ -21,6 +22,7 @@ export class BooksService {
     const user = req.user.id;
     const { titulo, autor, genero, anoDeLancamento } = createBookDto;
     const book: Book = {
+      id: uuid(),
       titulo,
       autor,
       genero,

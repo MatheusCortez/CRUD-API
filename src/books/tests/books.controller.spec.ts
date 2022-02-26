@@ -30,6 +30,7 @@ describe('BooksController', () => {
     describe('When the authentication is successful', () => {
       describe('Create a book item', () => {
         const bookCreate: CreateBookDto = {
+          id: '0eac96be-50ea-498a-853c-aca41c1d1ae0',
           titulo: 'Suicidas',
           autor: 'Rafael Montes',
           genero: 'Suspense',
@@ -77,7 +78,7 @@ describe('BooksController', () => {
         describe('When  called the method update', () => {
           it('Should call bookServiceMock.update', async () => {
             const result = await bookController.update(
-              booksListmock[0].id,
+              booksListmock[0].titulo,
               updateBook,
               idUser,
             );
@@ -85,7 +86,7 @@ describe('BooksController', () => {
           });
           it('Should call bookServiceMock.update with result id ', () => {
             expect(bookServiceMock.update).toBeCalledWith(
-              booksListmock[0].id,
+              booksListmock[0].titulo,
               updateBook,
             );
           });
@@ -95,7 +96,7 @@ describe('BooksController', () => {
         const idUser = '7b6b224e-b290-42bf-9387-a173323ec987';
         it('Should call userServiceMock.remove', async () => {
           const result = await bookController.remove(
-            booksListmock[0].id,
+            booksListmock[0].titulo,
             idUser,
           );
           expect(bookServiceMock.update).toBeCalled();
