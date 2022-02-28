@@ -8,6 +8,8 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Email é um campo obrigatorio' })
   @IsEmail({}, { message: 'Email inserido invalido' })
   email: string;
+  @IsNotEmpty({ message: 'Password é um campo obrigatorio' })
+  password: string;
   @IsNotEmpty({
     message: 'CEP é um campo obrigatorio',
   })

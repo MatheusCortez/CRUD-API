@@ -23,6 +23,8 @@ export class User {
   name: string;
   @Prop()
   email: string;
+  @Prop()
+  password: string;
   @Prop({ type: Address })
   address: Address;
 }
