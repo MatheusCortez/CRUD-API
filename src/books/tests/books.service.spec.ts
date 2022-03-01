@@ -1,21 +1,22 @@
-import { usersList } from './../../user/test/mocks/userList.mock';
+import { uuid } from 'uuidv4';
 import { CreateBookDto } from './../dto/create-book.dto';
-import { bookServiceMock } from './mocks/book.service.mock';
 import { Book, BookSchema, BookDocument } from './../../schemas/book.schema';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { BooksService } from '../books.service';
 import { Model } from 'mongoose';
-import { booksListmock } from './mocks/bookList.mock';
+import { AuthService } from '../../auth/auth.service';
+import { authServiceMock } from './mocks/auth.service.mock';
+import { BadRequestException } from '@nestjs/common';
 
 describe('BooksService', () => {
-  let service: BooksService;
+  let bookservice: BooksService;
   let bookModel: Model<BookDocument>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [BooksService],
+      providers: [BooksService, AuthService],
       imports: [
         MongooseModule.forRootAsync({
           useFactory: async () => {
@@ -30,43 +31,47 @@ describe('BooksService', () => {
         MongooseModule.forFeature([{ name: Book.name, schema: BookSchema }]),
       ],
     })
-      .overrideProvider(BooksService)
-      .useValue(bookServiceMock)
+      .overrideProvider(AuthService)
+      .useValue(authServiceMock)
       .compile();
 
-    service = module.get<BooksService>(BooksService);
+    bookservice = module.get<BooksService>(BooksService);
     bookModel = module.get<Model<BookDocument>>(getModelToken(Book.name));
   });
   afterEach(async () => {
     await bookModel.deleteMany({});
     jest.clearAllMocks();
   });
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('Smoke Tests', () => {
+    expect(bookservice).toBeDefined();
+    expect(bookModel).toBeDefined();
   });
 
-  describe('Book Service ', () => {
-    const createBook: CreateBookDto = {
-      id: '0eac96be-50ea-498a-853c-aca41c1d1ae0',
-      titulo: 'Suicidas',
-      autor: 'Rafael Montes',
-      genero: 'Suspense',
-      anoDeLancamento: '2012',
-    };
-    describe('When a creating book sucess', () => {
-      it('Should an user creating sucess', async () => {
-        const book = await bookServiceMock.create(createBook);
-        const resultFind = bookModel.findOne({ titulo: book.titulo });
+  describe('Book Service', () => {
+    describe('When creating a book ', () => {
+      const req = { user: { id: uuid() } };
+      const createBook: CreateBookDto = {
+        id: uuid(),
+        titulo: 'Neuromancer',
+        autor: 'James Warhola',
+        genero: 'Cyberpunk',
+        anoDeLancamento: '1991',
+      };
+      describe('When the user is Unauthorized ', () => {
+        it('should  has the error return', async () => {
+          const book = async () => await bookservice.create(createBook, req);
+          expect(book).rejects.toEqual(new BadRequestException('Unauthorized'));
+        });
       });
-    });
-    describe('Get Books', () => {
-      describe('When fetching a book list,', () => {
-        describe('when the user is not authorized', () => {
-          const book = booksListmock[0];
-          const req = booksListmock[0].user;
-          it('should a error message ', () => {
-            const result = bookServiceMock.findAll(req);
+      describe('When user is Authorized', () => {
+        it('Should return a book with user id', async () => {
+          const book = await bookservice.create(createBook, req);
+          const user = req.user.id;
+          const resultBook = await bookModel.findOne({
+            _id: createBook.id,
+            user,
           });
+          console.log(resultBook);
         });
       });
     });
