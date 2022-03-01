@@ -8,6 +8,7 @@ import {
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { uuid } from 'uuidv4';
+import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { apiCepService } from '../services/apicep/apicep.service';
@@ -23,7 +24,7 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const { name, cep, email } = createUserDto;
+    const { name, cep, email, password } = createUserDto;
     const userFound = await this.userModel.findOne({ email: email });
     if (!!userFound) throw new BadRequestException('Email já Cadastrado');
     const resultAPI = await this.buscaCepService.search(cep);
@@ -36,11 +37,12 @@ export class UserService {
           address: resultAPI.address,
         }
       : null;
-
+    const passwordHash = await bcrypt.hash(password, 12);
     const user: User = {
       id: uuid(),
       name,
       email,
+      password: passwordHash,
       address,
     };
     return this.userModel.create(user);
@@ -110,5 +112,9 @@ export class UserService {
         _id: id,
       })
       .exec();
+  }
+
+  async findOneEmail(email: string): Promise<User> {
+    return this.userModel.findOne({ email: email });
   }
 }

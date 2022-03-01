@@ -28,6 +28,7 @@ describe('User Module Controller', () => {
       id: uuid(),
       name: 'Matheus Cortez',
       email: 'Matheus.cortez@live.com',
+      password: '',
       cep: '03607060',
     };
     describe('When the service call is successful', () => {
