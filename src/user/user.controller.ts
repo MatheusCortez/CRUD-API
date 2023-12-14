@@ -10,13 +10,29 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { IUserResponse } from 'src/types/User.type';
+import { UserSwaggerResponse as UserResponse } from 'src/types/swaggers.type';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  @ApiResponse({
+    status: 201,
+    description: 'The record has been successfully created.',
+    type: UserResponse,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict.',
+  })
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+  })
+  create(@Body() createUserDto: CreateUserDto): Promise<IUserResponse> {
     return this.userService.create(createUserDto);
   }
 

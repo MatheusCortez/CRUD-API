@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -14,6 +15,7 @@ import { apiCepService } from '../services/apicep/apicep.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDocument } from '../schemas/user.schema';
+import { IUserResponse } from 'src/types/User.type';
 
 @Injectable()
 export class UserService {
@@ -22,10 +24,14 @@ export class UserService {
     private buscaCepService: apiCepService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<IUserResponse> {
     const { name, cep, email } = createUserDto;
     const userFound = await this.userModel.findOne({ email: email });
-    if (!!userFound) throw new BadRequestException('Email já Cadastrado');
+    console.log(
+      '🚀 ~ file: user.service.ts:28 ~ UserService ~ create ~ userFound:',
+      userFound,
+    );
+    if (!!userFound) throw new ConflictException('Email já Cadastrado');
     const resultAPI = await this.buscaCepService.search(cep);
     const address = resultAPI
       ? {
